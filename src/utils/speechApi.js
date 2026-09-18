@@ -91,9 +91,13 @@ function findBestVoice(bcp47Tag) {
   const prefixMatch = voices.find((v) => v.lang.toLowerCase().startsWith(prefix));
   if (prefixMatch) return prefixMatch;
 
-  // 3. Indian English / local dialect match
-  const indianEnglish = voices.find((v) => v.lang.toLowerCase().includes('in'));
-  if (indianEnglish) return indianEnglish;
+  // 3. English or Indian voice match
+  const targetPrefix = bcp47Tag.split('-')[0].toLowerCase();
+  const regionalMatch = voices.find((v) => {
+    const vLang = v.lang.toLowerCase();
+    return targetPrefix === 'en' ? vLang.startsWith('en') : vLang.includes('in');
+  });
+  if (regionalMatch) return regionalMatch;
 
   // 4. Default voice
   return voices.find((v) => v.default) || voices[0] || null;
@@ -203,11 +207,6 @@ export function speakWithIndicF5({ text, language = 'en', onStart, onEnd, onErro
   let fallbackController = null;
 
   const bcp47 = getBCP47Tag(language);
-
-  // If language is English, immediately use browser SpeechSynthesis
-  if (language === 'en') {
-    return speakText(text, 'en-IN', onStart, onEnd);
-  }
 
   onStart?.();
 

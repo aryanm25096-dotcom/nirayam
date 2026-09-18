@@ -28,12 +28,6 @@ function ttsProxyPlugin() {
           try {
             const { text, language } = JSON.parse(bodyStr || '{}');
 
-            // Explicit fallback path for English (IndicF5 only supports 11 Indian languages)
-            if (language === 'en') {
-              res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify({ useFallback: true, language: 'en' }));
-              return;
-            }
 
             try {
               const controller = new AbortController();

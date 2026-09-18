@@ -15,7 +15,13 @@ import {
 import './Step1.css';
 
 const ALL_LANGUAGES = [
-  // Page 1 (Mockup primary 6)
+  // Page 1 (Primary 6 languages)
+  { 
+    code: 'en', 
+    label: 'English', 
+    native: 'English', 
+    greeting: 'Welcome to MediKiosk. Please click continue to proceed.' 
+  },
   { 
     code: 'hi', 
     label: 'Hindi', 
@@ -46,13 +52,13 @@ const ALL_LANGUAGES = [
     native: 'తెలుగు', 
     greeting: 'నమస్కారం! MediKiosk కి స్వాగతం. కొనసాగడానికి ముందుకు సాగండి నొక్కండి.' 
   },
+  // Page 2 (Remaining 6 Indian languages)
   { 
     code: 'gu', 
     label: 'Gujarati', 
     native: 'ગુજરાતી', 
     greeting: 'નમસ્તે! MediKiosk માં આપનું સ્વાગત છે. આગળ વધવા માટે આગળ વધો દબાવો.' 
   },
-  // Page 2 (Remaining 5 Indian + English)
   { 
     code: 'kn', 
     label: 'Kannada', 
@@ -82,12 +88,6 @@ const ALL_LANGUAGES = [
     label: 'Assamese', 
     native: 'অসমীয়া', 
     greeting: 'নমস্কাৰ! MediKiosk লৈ স্বাগতম।' 
-  },
-  { 
-    code: 'en', 
-    label: 'English', 
-    native: 'English', 
-    greeting: 'Welcome to MediKiosk. Please click continue to proceed.' 
   }
 ];
 
@@ -96,11 +96,14 @@ export default function LanguageSelect() {
   const { state, dispatch } = usePatientSession();
   const { narrate, stop } = useNarration();
 
-  // Active selected language (defaults to Hindi as in reference mockup)
+  // Active selected language (respects existing session language or defaults to English)
   const [selectedLang, setSelectedLang] = useState(() => {
-    return state.language && state.language !== 'en' ? state.language : 'hi';
+    return state.language || 'en';
   });
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(() => {
+    const idx = ALL_LANGUAGES.findIndex((l) => l.code === (state.language || 'en'));
+    return idx >= 6 ? 1 : 0;
+  });
   const [showLangDropdown, setShowLangDropdown] = useState(false);
   const [isHighContrast, setIsHighContrast] = useState(() => {
     return document.documentElement.getAttribute('data-theme') === 'high-contrast';

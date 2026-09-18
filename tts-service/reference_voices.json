@@ -42,5 +42,9 @@
   "as": {
     "audio_path": "reference_clips/as_ref.wav",
     "ref_text": "নমস্কাৰ, মই আপোনাৰ স্বাস্থ্য পৰীক্ষাত সহায় কৰিবলৈ ইয়াত আছো।"
+  },
+  "en": {
+    "audio_path": "reference_clips/en_ref.wav",
+    "ref_text": "Welcome to MediKiosk. I am here to assist with your clinical intake."
   }
 }

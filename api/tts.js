@@ -21,7 +21,7 @@ function fetchAudio(text, lang) {
       ml: 'ml',
       pa: 'pa',
       ur: 'ur',
-      en: 'en-IN',
+      en: 'en',
       as: 'bn', // Assamese fallback to Bengali phonetics
       or: 'hi', // Odia fallback to Hindi phonetics
     };

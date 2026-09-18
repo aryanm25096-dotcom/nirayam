@@ -87,10 +87,10 @@ def synthesize_speech(text: str, lang: str) -> Tuple[str, str, str]:
         except Exception as e:
             logger.error(f"IndicF5 inference error: {e}")
 
-    # 2. Natural Indian-Language Spoken Voice
+    # 2. Natural Spoken Voice (gTTS)
     try:
         from gtts import gTTS
-        gtts_lang = lang if lang in ['hi', 'mr', 'bn', 'ta', 'te', 'gu', 'kn', 'ml', 'pa'] else 'hi'
+        gtts_lang = 'en' if lang == 'en' else (lang if lang in ['hi', 'mr', 'bn', 'ta', 'te', 'gu', 'kn', 'ml', 'pa'] else 'hi')
         tts = gTTS(text=text, lang=gtts_lang, slow=False)
         buf = io.BytesIO()
         tts.write_to_fp(buf)
@@ -121,8 +121,8 @@ def synthesize(req: TTSRequest):
     if not text:
         raise HTTPException(status_code=400, detail="Text cannot be empty")
 
-    ref = REFERENCE_VOICES.get(lang)
-    if ref is None:
+    supported = set(list(REFERENCE_VOICES.keys()) + ["en"])
+    if lang not in supported:
         return {"error": f"Unsupported language for IndicF5: {lang}"}
 
     cache_key = (text, lang)
