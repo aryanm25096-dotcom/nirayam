@@ -110,13 +110,13 @@ export default function IdentifyMethod() {
           <button
             type="button"
             className="im-back-btn"
-            onClick={() => navigate('/identify')}
+            onClick={() => navigate('/role-select')}
           >
             <svg className="im-back-arrow" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" viewBox="0 0 24 24">
               <line x1="19" x2="5" y1="12" y2="12" />
               <polyline points="12 19 5 12 12 5" />
             </svg>
-            {t('changeLanguage')}
+            Change Role
           </button>
 
           <p className="im-step-label">{t('step1of5')}</p>

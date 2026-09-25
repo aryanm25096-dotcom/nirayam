@@ -12,7 +12,7 @@ const ROLES = [
     key: 'patient',
     label: 'Patient',
     desc: 'Check symptoms, find nearby services, book appointments and view your health records.',
-    route: '/identify',
+    route: '/identify/method',
     img: imgPatient,
     imgAlt: 'Elderly female patient in orange saree',
     thumbBg: '#FCE5D2',
@@ -86,6 +86,18 @@ export default function RoleSelection() {
           {/* ── LEFT: Hero ── */}
           <section className="rs-hero" aria-label="Niramay role selection introduction">
             <div className="rs-hero-text">
+              <button
+                type="button"
+                className="rs-back-btn"
+                onClick={() => navigate('/identify')}
+                aria-label="Back to language selection"
+              >
+                <svg fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24" width="18" height="18">
+                  <path d="M19 12H5m7 7l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span>Change Language</span>
+              </button>
+
               <h1 className="rs-headline">
                 Select your{' '}
                 <span className="rs-accent">

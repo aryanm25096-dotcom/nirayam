@@ -20,74 +20,74 @@ const ALL_LANGUAGES = [
     code: 'en', 
     label: 'English', 
     native: 'English', 
-    greeting: 'Welcome to MediKiosk. Please click continue to proceed.' 
+    greeting: 'Welcome to Niramay. Please click continue to proceed.' 
   },
   { 
     code: 'hi', 
     label: 'Hindi', 
     native: 'हिन्दी', 
-    greeting: 'नमस्ते! MediKiosk में आपका स्वागत है। जारी रखने के लिए आगे बढ़ें।' 
+    greeting: 'नमस्ते! Niramay में आपका स्वागत है। जारी रखने के लिए आगे बढ़ें।' 
   },
   { 
     code: 'mr', 
     label: 'Marathi', 
     native: 'मराठी', 
-    greeting: 'नमस्कार! MediKiosk मध्ये आपले स्वागत आहे. पुढे जाण्यासाठी पुढे जा दाबा.' 
+    greeting: 'नमस्कार! Niramay मध्ये आपले स्वागत आहे. पुढे जाण्यासाठी पुढे जा दाबा.' 
   },
   { 
     code: 'bn', 
     label: 'Bengali', 
     native: 'বাংলা', 
-    greeting: 'নমস্কার! MediKiosk-এ স্বাগতম। চালিয়ে যেতে এগিয়ে যান চাপুন।' 
+    greeting: 'নমস্কার! Niramay-এ স্বাগতম। চালিয়ে যেতে এগিয়ে যান চাপুন।' 
   },
   { 
     code: 'ta', 
     label: 'Tamil', 
     native: 'தமிழ்', 
-    greeting: 'வணக்கம்! MediKiosk-க்கு வரவேற்கிறோம். தொடர தொடரவும் அழுத்தவும்.' 
+    greeting: 'வணக்கம்! Niramay-க்கு வரவேற்கிறோம். தொடர தொடரவும் அழுத்தவும்.' 
   },
   { 
     code: 'te', 
     label: 'Telugu', 
     native: 'తెలుగు', 
-    greeting: 'నమస్కారం! MediKiosk కి స్వాగతం. కొనసాగడానికి ముందుకు సాగండి నొక్కండి.' 
+    greeting: 'నమస్కారం! Niramay కి స్వాగతం. కొనసాగడానికి ముందుకు సాగండి నొక్కండి.' 
   },
   // Page 2 (Remaining 6 Indian languages)
   { 
     code: 'gu', 
     label: 'Gujarati', 
     native: 'ગુજરાતી', 
-    greeting: 'નમસ્તે! MediKiosk માં આપનું સ્વાગત છે. આગળ વધવા માટે આગળ વધો દબાવો.' 
+    greeting: 'નમસ્તે! Niramay માં આપનું સ્વાગત છે. આગળ વધવા માટે આગળ વધો દબાવો.' 
   },
   { 
     code: 'kn', 
     label: 'Kannada', 
     native: 'ಕನ್ನಡ', 
-    greeting: 'ನಮಸ್ಕಾರ! MediKiosk ಗೆ ಸುಸ್ವಾಗತ. ಮುಂದುವರಿಯಲು ಮುಂದುವರಿಯಿರಿ ಒತ್ತಿ.' 
+    greeting: 'ನಮಸ್ಕಾರ! Niramay ಗೆ ಸುಸ್ವಾಗತ. ಮುಂದುವರಿಯಲು ಮುಂದುವರಿಯಿರಿ ಒತ್ತಿ.' 
   },
   { 
     code: 'ml', 
     label: 'Malayalam', 
     native: 'മലയാളം', 
-    greeting: 'നമസ്കാരം! MediKiosk ലേക്ക് സ്വാഗതം. തുടരുന്നതിന് മുന്നോട്ട് പോകുക.' 
+    greeting: 'നമസ്കാരം! Niramay ലേക്ക് സ്വാഗതം. തുടരുന്നതിന് മുന്നോട്ട് പോകുക.' 
   },
   { 
     code: 'pa', 
     label: 'Punjabi', 
     native: 'ਪੰਜਾਬੀ', 
-    greeting: 'ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ! MediKiosk ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ।' 
+    greeting: 'ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ! Niramay ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ।' 
   },
   { 
     code: 'or', 
     label: 'Odia', 
     native: 'ଓଡ଼ିଆ', 
-    greeting: 'ନମସ୍କାର! MediKiosk କୁ ସ୍ୱାଗତ।' 
+    greeting: 'ନମସ୍କାର! Niramay କୁ ସ୍ୱାଗତ।' 
   },
   { 
     code: 'as', 
     label: 'Assamese', 
     native: 'অসমীয়া', 
-    greeting: 'নমস্কাৰ! MediKiosk লৈ স্বাগতম।' 
+    greeting: 'নমস্কাৰ! Niramay লৈ স্বাগতম।' 
   }
 ];
 
@@ -110,7 +110,7 @@ export default function LanguageSelect() {
   });
 
   // Welcome prompt narration on initial load
-  useAutoNarration('Welcome to MediKiosk. Please choose your language to begin clinical intake.', 400);
+  useAutoNarration('Welcome to Niramay. Please choose your language to begin clinical intake.', 400);
 
   // Sync session state when selected
   useEffect(() => {
@@ -143,9 +143,9 @@ export default function LanguageSelect() {
     }
   };
 
-  // Handle Continue button
+  // Handle Continue button: Navigates to Screen 2 (Role Selection)
   const handleContinue = () => {
-    navigate('/identify/method');
+    navigate('/role-select');
   };
 
   // Toggle Theme between Default and High-Contrast
@@ -170,7 +170,7 @@ export default function LanguageSelect() {
               <Activity size={24} />
             </div>
             <div className="kiosk-brand-info">
-              <div className="kiosk-brand-title">MediKiosk</div>
+              <div className="kiosk-brand-title">Niramay</div>
               <div className="kiosk-brand-subtitle">AI Clinical Intake &amp; OPD Digitization</div>
             </div>
           </div>

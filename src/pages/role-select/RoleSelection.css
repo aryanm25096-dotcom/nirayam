@@ -76,6 +76,31 @@
   max-width: 30rem;
 }
 
+/* Back button */
+.rs-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1.25rem;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 1px solid #D2E4D9;
+  color: #0F3528;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  width: fit-content;
+}
+.rs-back-btn:hover {
+  background: #E8F5EE;
+  border-color: #0F3528;
+  transform: translateX(-3px);
+}
+
 /* Headline */
 .rs-headline {
   font-size: clamp(2.25rem, 3.4vw, 3.5rem);
