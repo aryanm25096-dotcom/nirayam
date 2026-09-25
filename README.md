@@ -141,3 +141,4 @@ Persistent floating accessibility panel visible on every page:
 - **Reduce Motion**: Disables all transitions and animations for motion-sensitive users.
 - **Semantic HTML & Focus Outlines**: Real `<button>`, `<label>`, `<input>`, `<article>`, `<main>` with high-visibility 3px outline on `:focus-visible`.
 - **ARIA Live Regions**: `aria-live="polite"` and `aria-live="assertive"` announcing voice listening status, OCR completion, and red-flag alerts to screen readers.
+# niramay
