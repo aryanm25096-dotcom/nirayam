@@ -5,14 +5,16 @@ import SummarySection from '../../components/SummarySection.jsx';
 import DocumentCard from '../../components/DocumentCard.jsx';
 import RedFlagBanner from '../../components/RedFlagBanner.jsx';
 import StatusBadge from '../../components/StatusBadge.jsx';
+import TeleconsultModal from '../../components/TeleconsultModal.jsx';
 import {
   User,
   Clock,
   CheckCircle,
   FileCheck,
   Stethoscope,
-  Building,
   RotateCcw,
+  ArrowLeft,
+  Video,
 } from 'lucide-react';
 import './Step5.css';
 
@@ -20,9 +22,26 @@ export default function PhysicianConsult() {
   const navigate = useNavigate();
   const { state, dispatch } = usePatientSession();
 
-  const [consultCompleted, setConsultCompleted] = useState(state.reviewedByDoctor || false);
+  // Find active patient from queue or fall back to current session
+  const selectedPatient = (state.patientQueue || []).find(
+    (p) => p.id === state.selectedDoctorPatientId
+  );
 
-  const history = state.structuredHistory || {
+  const activePatientName = selectedPatient?.name || state.patientName || 'Ramesh Kumar';
+  const activePatientId = selectedPatient?.abhaNumber || state.patientId || '91-4521-8890-1234';
+  const activeToken = selectedPatient?.token || `MK-${state.patientId ? state.patientId.slice(-4) : '1042'}`;
+  const activeConsultationType = selectedPatient?.consultationType || state.consultationType || 'general';
+  const activeRedFlag = selectedPatient?.redFlag || state.redFlag;
+  const isTeleconsultReferred = selectedPatient?.source === 'ASHA Referral' || selectedPatient?.isTeleconsult;
+  const referringWorker = selectedPatient?.referringWorker || 'Sunita Devi (CHO / ASHA — Sub-Centre Rampur)';
+
+  const consultCompleted = selectedPatient
+    ? selectedPatient.status === 'Completed'
+    : (state.reviewedByDoctor || false);
+  const [isTeleconsultOpen, setIsTeleconsultOpen] = useState(false);
+
+  // Structured history from selected patient or active session with fallback defaults
+  const history = selectedPatient?.structuredHistory || state.structuredHistory || {
     chiefComplaint: state.answers.find((a) => a.category === 'chiefComplaint')?.answer || 'Chest pain for 2 days',
     hpiNarrative: state.answers.filter((a) => a.category?.startsWith('hpi')).map((a) => `${a.questionText}: ${a.answer}`).join('. ') || 'Sharp, retrosternal pain radiating to left arm with accompanying shortness of breath on exertion.',
     pastMedical: ['Type 2 Diabetes Mellitus (diagnosed 2018)'],
@@ -36,6 +55,16 @@ export default function PhysicianConsult() {
   };
 
   const handleEditSection = (sectionKey, newContent) => {
+    if (selectedPatient) {
+      dispatch({
+        type: ActionTypes.EDIT_PATIENT_HISTORY,
+        payload: {
+          patientId: selectedPatient.id,
+          section: sectionKey,
+          value: newContent,
+        },
+      });
+    }
     dispatch({
       type: ActionTypes.EDIT_SECTION,
       payload: { section: sectionKey, value: newContent },
@@ -51,13 +80,18 @@ export default function PhysicianConsult() {
     setConsultCompleted(true);
   };
 
+  const handleBackToQueue = () => {
+    navigate('/doctor');
+  };
+
   const handleStartNewSession = () => {
     dispatch({ type: ActionTypes.RESET });
     navigate('/identify');
   };
 
   // Sort documents chronologically by date
-  const sortedDocuments = [...(state.documents || [])].sort(
+  const rawDocs = selectedPatient?.documents || state.documents || [];
+  const sortedDocuments = [...rawDocs].sort(
     (a, b) => new Date(a.date || '2025-01-01') - new Date(b.date || '2025-01-01')
   );
 
@@ -66,26 +100,52 @@ export default function PhysicianConsult() {
       {/* Top Header / Context Bar */}
       <header className="physician-header">
         <div className="physician-header-left">
+          <button
+            type="button"
+            className="back-to-queue-btn"
+            onClick={handleBackToQueue}
+            aria-label="Return to Doctor Patient Queue"
+          >
+            <ArrowLeft size={18} aria-hidden="true" />
+            <span>Patient Queue</span>
+          </button>
+
+          <span className="divider-slash" aria-hidden="true">/</span>
+
           <div className="doctor-badge">
-            <Stethoscope size={22} aria-hidden="true" />
+            <Stethoscope size={20} aria-hidden="true" />
             <span className="doctor-name">Dr. Ananya Sharma, MD</span>
           </div>
+
           <span className="divider-slash" aria-hidden="true">/</span>
           <span className="opd-room-text">OPD Room #4 — Cardiology / Internal Medicine</span>
         </div>
 
         <div className="physician-header-right">
+          {/* Initiate Teleconsultation Button for ASHA referrals */}
+          {isTeleconsultReferred && (
+            <button
+              type="button"
+              className="teleconsult-trigger-btn"
+              onClick={() => setIsTeleconsultOpen(true)}
+              aria-label="Initiate Teleconsultation with referring ASHA worker"
+            >
+              <Video size={16} aria-hidden="true" />
+              <span>Initiate Teleconsultation</span>
+            </button>
+          )}
+
           <StatusBadge
-            status={state.redFlag?.triggered && !state.redFlag?.acknowledgedByDoctor ? 'critical' : 'success'}
-            label={state.redFlag?.triggered && !state.redFlag?.acknowledgedByDoctor ? 'RED-FLAG TRIAGE' : 'PATIENT QUEUE: ACTIVE'}
+            status={activeRedFlag?.triggered && !activeRedFlag?.acknowledgedByDoctor ? 'critical' : 'success'}
+            label={activeRedFlag?.triggered && !activeRedFlag?.acknowledgedByDoctor ? 'RED-FLAG TRIAGE' : 'PATIENT QUEUE: ACTIVE'}
           />
         </div>
       </header>
 
       {/* Red-Flag Priority Banner (Persistent until acknowledged) */}
-      {state.redFlag?.triggered && !state.redFlag?.acknowledgedByDoctor && (
+      {activeRedFlag?.triggered && !activeRedFlag?.acknowledgedByDoctor && (
         <RedFlagBanner
-          message={state.redFlag.message}
+          message={activeRedFlag.message}
           isDoctorView
           onAcknowledge={handleAcknowledgeRedFlag}
         />
@@ -101,9 +161,9 @@ export default function PhysicianConsult() {
                 <User size={28} aria-hidden="true" />
               </div>
               <div>
-                <h2 className="patient-display-name">{state.patientName || 'Ramesh Kumar'}</h2>
+                <h2 className="patient-display-name">{activePatientName}</h2>
                 <span className="patient-token-badge">
-                  TOKEN: MK-{state.patientId ? state.patientId.slice(-4) : '1042'}
+                  TOKEN: {activeToken}
                 </span>
               </div>
             </div>
@@ -111,23 +171,29 @@ export default function PhysicianConsult() {
             <dl className="demographics-list">
               <div className="demo-item">
                 <dt>ABHA Number</dt>
-                <dd>{state.patientId || '91-4521-8890-1234'}</dd>
-              </div>
-              <div className="demo-item">
-                <dt>Language</dt>
-                <dd>{state.language === 'hi' ? 'Hindi (हिन्दी)' : state.language === 'mr' ? 'Marathi (मराठी)' : 'English'}</dd>
+                <dd>{activePatientId}</dd>
               </div>
               <div className="demo-item">
                 <dt>Consultation Stream</dt>
-                <dd>{state.consultationType === 'ayush' ? 'AYUSH & Ayurveda' : 'General Medicine'}</dd>
+                <dd>{activeConsultationType === 'ayush' ? 'AYUSH & Ayurveda' : 'General Medicine'}</dd>
               </div>
               <div className="demo-item">
+                <dt>Source</dt>
+                <dd>{selectedPatient?.source || 'Self-Intake Kiosk'}</dd>
+              </div>
+              {selectedPatient?.referringWorker && (
+                <div className="demo-item">
+                  <dt>Referring ASHA</dt>
+                  <dd>{selectedPatient.referringWorker}</dd>
+                </div>
+              )}
+              <div className="demo-item">
                 <dt>ABDM Consent</dt>
-                <dd>{state.consents.abdm ? 'Granted' : 'Local Hospital Only'}</dd>
+                <dd>{state.consents?.abdm ? 'Granted' : 'Local Hospital Only'}</dd>
               </div>
               <div className="demo-item">
                 <dt>Intake Completed</dt>
-                <dd>Today at 10:42 AM</dd>
+                <dd>{selectedPatient?.intakeTime || 'Today at 10:42 AM'}</dd>
               </div>
             </dl>
           </div>
@@ -157,16 +223,26 @@ export default function PhysicianConsult() {
               <CheckCircle size={48} className="success-icon" aria-hidden="true" />
               <h2 className="completed-title">History Verified &amp; Signed into EHR</h2>
               <p className="completed-desc">
-                The physician-reviewed clinical history and digitized records have been countersigned and saved to the hospital EHR and linked ABHA profile.
+                The physician-reviewed clinical history and digitized records for {activePatientName} have been countersigned and saved to the hospital EHR and linked ABHA profile.
               </p>
-              <button
-                type="button"
-                className="btn-primary"
-                onClick={handleStartNewSession}
-              >
-                <RotateCcw size={18} aria-hidden="true" />
-                <span>Start New MediKiosk Intake Demo</span>
-              </button>
+              <div className="completed-actions-row">
+                <button
+                  type="button"
+                  className="btn-primary"
+                  onClick={handleBackToQueue}
+                >
+                  <ArrowLeft size={18} aria-hidden="true" />
+                  <span>Return to Patient Queue</span>
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={handleStartNewSession}
+                >
+                  <RotateCcw size={18} aria-hidden="true" />
+                  <span>Start New Patient Intake Demo</span>
+                </button>
+              </div>
             </div>
           ) : (
             <>
@@ -208,7 +284,7 @@ export default function PhysicianConsult() {
                 />
 
                 {/* AYUSH Dashavidha Pariksha if present */}
-                {state.consultationType === 'ayush' && (
+                {activeConsultationType === 'ayush' && (
                   <SummarySection
                     title="2a. Ayurvedic Dashavidha Pariksha &amp; Ahara/Vihara"
                     content={history.ayush}
@@ -302,6 +378,15 @@ export default function PhysicianConsult() {
           )}
         </div>
       </div>
+
+      {/* WebRTC Mock Teleconsultation Modal */}
+      <TeleconsultModal
+        isOpen={isTeleconsultOpen}
+        onClose={() => setIsTeleconsultOpen(false)}
+        currentRole="doctor"
+        patientName={activePatientName}
+        partnerName={referringWorker}
+      />
     </div>
   );
 }

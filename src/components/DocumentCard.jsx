@@ -36,7 +36,13 @@ export default function DocumentCard({ doc, onConfirm, onRescan, isDoctorView = 
             </tr>
           </thead>
           <tbody>
-            {doc.extractedFields?.map((field, idx) => {
+            {(Array.isArray(doc.extractedFields)
+              ? doc.extractedFields
+              : Object.entries(doc.extractedFields || {}).map(([k, v]) => ({
+                  label: k,
+                  value: typeof v === 'object' ? JSON.stringify(v) : String(v),
+                }))
+            ).map((field, idx) => {
               const labStatus = field.numericValue ? checkLabValue(field.label, field.numericValue) : 'normal';
               const isAbnormal = labStatus === 'high' || labStatus === 'low';
 
